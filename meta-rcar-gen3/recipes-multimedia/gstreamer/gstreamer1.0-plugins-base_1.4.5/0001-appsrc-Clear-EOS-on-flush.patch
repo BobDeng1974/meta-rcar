@@ -1,0 +1,29 @@
+From 2a80ef986e72128775cfdceace9357988f8568f3 Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Wed, 8 Feb 2017 10:04:08 +0900
+Subject: [PATCH] appsrc-Clear-EOS-on-flush
+
+---
+ gst-libs/gst/app/gstappsrc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gst-libs/gst/app/gstappsrc.c b/gst-libs/gst/app/gstappsrc.c
+index aeefdb8..e521582 100644
+--- a/gst-libs/gst/app/gstappsrc.c
++++ b/gst-libs/gst/app/gstappsrc.c
+@@ -716,10 +716,12 @@ static gboolean
+ gst_app_src_send_event (GstElement * element, GstEvent * event)
+ {
+   GstAppSrc *appsrc = GST_APP_SRC_CAST (element);
++  GstAppSrcPrivate *priv = appsrc->priv;
+ 
+   switch (GST_EVENT_TYPE (event)) {
+     case GST_EVENT_FLUSH_STOP:
+       gst_app_src_flush_queued (appsrc);
++      priv->is_eos = FALSE;
+       break;
+     default:
+       break;
+-- 
+1.9.1
+
