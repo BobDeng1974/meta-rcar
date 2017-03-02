@@ -1,0 +1,45 @@
+From f39d9a74e332ba14992789c9d672259520cc8601 Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Thu, 2 Mar 2017 17:17:10 +0900
+Subject: [PATCH 1/2] ozone/wayland: Add simple implementation of fullscreen
+ toggle
+
+Only works for one screen, but that is ok for now, since
+ozone/wayland currently only supports one screen.
+---
+ ui/ozone/platform/wayland/wayland_window.cc | 6 +++++-
+ ui/ozone/platform/wayland/wayland_window.h  | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/ui/ozone/platform/wayland/wayland_window.cc b/src/ui/ozone/platform/wayland/wayland_window.cc
+index 3711dbd..f25b2f2 100644
+--- a/ui/ozone/platform/wayland/wayland_window.cc
++++ b/ui/ozone/platform/wayland/wayland_window.cc
+@@ -107,7 +107,11 @@ void WaylandWindow::ReleaseCapture() {
+ }
+ 
+ void WaylandWindow::ToggleFullscreen() {
+-  NOTIMPLEMENTED();
++  DCHECK(xdg_surface_);
++  if (is_fullscreen_)
++    xdg_surface_unset_fullscreen(xdg_surface_.get());
++  else
++    xdg_surface_set_fullscreen(xdg_surface_.get(), NULL);
+ }
+ 
+ void WaylandWindow::Maximize() {
+diff --git a/ui/ozone/platform/wayland/wayland_window.h b/src/ui/ozone/platform/wayland/wayland_window.h
+index fa004a0..221164f 100644
+--- a/ui/ozone/platform/wayland/wayland_window.h
++++ b/ui/ozone/platform/wayland/wayland_window.h
+@@ -82,6 +82,7 @@ class WaylandWindow : public PlatformWindow, public PlatformEventDispatcher {
+   uint32_t pending_configure_serial_;
+   bool has_pointer_focus_ = false;
+   bool has_keyboard_focus_ = false;
++  bool is_fullscreen_ = false;
+ 
+   DISALLOW_COPY_AND_ASSIGN(WaylandWindow);
+ };
+-- 
+1.9.1
+

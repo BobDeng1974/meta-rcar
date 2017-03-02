@@ -1,0 +1,29 @@
+From d5cd23e397fc23be6b6a80c7e45347c6a5d233c3 Mon Sep 17 00:00:00 2001
+From: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Date: Thu, 2 Mar 2017 17:20:24 +0900
+Subject: [PATCH 2/2] ozone/wayland; check for a valid surface in Leave
+ callback
+
+Depending on the surface state when the callback is received, the surface
+pointer may be null.  Check it before trying to use it.
+---
+ ui/ozone/platform/wayland/wayland_keyboard.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/ozone/platform/wayland/wayland_keyboard.cc b/ozone/platform/wayland/wayland_keyboard.cc
+index cc95381..5e3a82c 100644
+--- a/ui/ozone/platform/wayland/wayland_keyboard.cc
++++ b/ui/ozone/platform/wayland/wayland_keyboard.cc
+@@ -53,7 +53,8 @@ void WaylandKeyboard::Leave(void* data,
+                             wl_keyboard* obj,
+                             uint32_t serial,
+                             wl_surface* surface) {
+-  WaylandWindow::FromSurface(surface)->set_keyboard_focus(false);
++  if (surface)
++    WaylandWindow::FromSurface(surface)->set_keyboard_focus(false);
+ }
+ 
+ void WaylandKeyboard::Key(void* data,
+-- 
+1.9.1
+
